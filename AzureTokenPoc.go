@@ -35,6 +35,7 @@ func main(){
 	browserCmdIn ,_ := browserCmd.StdinPipe()
 	browserCmdOut ,_ := browserCmd.StdoutPipe()
 	browserCmd.Start()
+	// adding nonce support tommorow \"uri\":\"https://login.microsoftonline.com/common/oauth2/authorize?sso_nonce={nonce}\","
 	stuff := "{\"method\":\"GetCookies\",\"uri\":\"https://login.microsoftonline.com/common/oauth2/authorize\",\"sender\":\"https://login.microsoftonline.com\"}"
 	fmt.Println("Sending json to process stdin => ",stuff)
 	stuffLen := len(stuff)
